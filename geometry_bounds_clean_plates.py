@@ -3,7 +3,7 @@ import geopandas as gpd
 import pandas as pd
 import fiona 
 
-path = r"C:\PANALESIS\Vers0_christian\Plates_psAbs_output.gpkg"
+path = r"C:\PANALESIS\Vers0_christian\Plates_psAbs_output_geom_clean.gpkg"
 
 layers = fiona.listlayers(path)
 
@@ -41,14 +41,23 @@ for layer in layers:
             print("Polygone dépasse les limites latitudes")
             print("miny=", minx, "maxy=",maxx)
             
-            
-#Afficher uniquement les lignes avec des geométries NONE avec le nom de la couche, et leur index :
-for layer in layers :
-    gdf = gpd.read_file("C:\PANALESIS\Vers0_christian\Plates_psAbs_output.gpkg", layer = layer)
-    none_rows = gdf[gdf.geometry.isna()]
-    print("couche :", layer, id, none_rows)
-    
-    
+#Correction des géométries et export :
+
+from shapely.ops import transform
+import numpy as np
+
+#fonction pour clip dans l'interval :
+
+def clip_lon_lat(x, y):
+    if abs(x) > 180 or abs(x) < -180:
+        x = np.clip(x, -180, 180)
+    if abs(y) > 90 or abs(y) < -90:
+        y = np.clip(y, -90, 90)
+    return (x, y)
+
+#appliquer à toutes les couches et export : 
+
+
 output_directory = r"C:\PANALESIS\Vers0_christian\Plates_psAbs_output_bounds_clean.gpkg"
 
 
@@ -62,3 +71,40 @@ for layer in layers:
     
 print("export done")
 
+#Verification géométrie sur le nouveau gpkg corrigé : 
+ #[-180,180]
+for layer in layers:
+    path = r"C:\PANALESIS\Vers0_christian\Plates_psAbs_output_bounds_clean.gpkg"
+    gdf = gpd.read_file(path, layer=layer)
+
+    print("Couche :",layer)
+    print(gdf.head())
+     # Vérifier les géométries
+    for idx, geom in enumerate(gdf.geometry):
+
+        # Bornes (-180 à +180) : minx, miny, maxx, maxy
+        minx, miny, maxx, maxy = geom.bounds
+
+        # Hors limites
+        if minx < -180 or maxx > 180:
+            print("Polygone dépasse les limites longitudes")
+            print("minx=", minx, "maxx=",maxx)
+              
+#[-90,90]
+for layer in layers:
+    path = r"C:\PANALESIS\Vers0_christian\Plates_psAbs_output_bounds_clean.gpkg"
+    gdf = gpd.read_file(path, layer=layer)
+
+    print("Couche :",layer)
+    print(gdf.head())
+     # Vérifier les géométries
+    for idx, geom in enumerate(gdf.geometry):
+
+        # Bornes (-90 à +90) : minx, miny, maxx, maxy
+        minx, miny, maxx, maxy = geom.bounds
+
+        # Hors limites
+        if miny < -90 or maxy > 90:
+            print("Polygone dépasse les limites latitudes")
+            print("miny=", minx, "maxy=",maxx)
+    
