@@ -7,25 +7,6 @@ path = r"C:\PANALESIS\Vers0_christian\Plates_psAbs_output.gpkg"
 
 layers = fiona.listlayers(path)
 
-#geometrie NONe 
-
-for layer in layers:
-    gdf = gpd.read_file(path, layer=layer)
-
-    print("Couche :", layer)
-
-    for idx, geom in gdf.geometry.items():
-
-        if geom is None:
-            print(f"FID {idx} → géométrie vide (None)")
-            continue
-
-        minx, miny, maxx, maxy = geom.bounds
-
-        if minx < -180 or maxx > 180:
-            print(f"FID: {idx}")
-            print("minx=", minx, "maxx=", maxx)
-
 #Connaitre les polygones qui dépassent les limites des bornes longitudes [-180,180] :
 for layer in layers:
     gdf = gpd.read_file(path, layer=layer)
