@@ -7,7 +7,7 @@ print(gdf)
 layers = fiona.listlayers("C:\PANALESIS\Vers0_christian\COB_psAbs_output.gpkg")
 for layer in layers :
     gdf = gpd.read_file("C:\PANALESIS\Vers0_christian\COB_psAbs_output.gpkg", layer = layer)
-    print(f"\nlayer : {layer}")
+    print("layer :",layer)
     print(gdf)
 
 
