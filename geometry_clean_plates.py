@@ -7,7 +7,7 @@ print(gdf)
 layers = fiona.listlayers("C:\PANALESIS\Vers0_christian\Plates_psAbs_output.gpkg")
 for layer in layers :
     gdf = gpd.read_file("C:\PANALESIS\Vers0_christian\Plates_psAbs_output.gpkg", layer = layer)
-    print("layer :", layer)
+    print("layer:", layer)
     print(gdf)
 
 
@@ -48,6 +48,29 @@ print(geom_empty_df)
 
 #Pas de géométrie empty pour les plates
 
+# Check géométrie na
+for layer in layers :
+    gdf = gpd.read_file("C:\PANALESIS\Vers0_christian\Plates_psAbs_output.gpkg", layer = layer)
+    print(gdf.geometry.isna())
+    
+# Il y a une geometrie na 
 
+# Export : 
+output_gpkg = r"C:\PANALESIS\Vers0_christian\Plates_psAbs_output_geom_clean.gpkg"
+for layer in layers :
+    gdf = gpd.read_file("C:\PANALESIS\Vers0_christian\Plates_psAbs_output.gpkg", layer = layer)
+    gdf_clean = gdf[gdf.geometry.notna() &
+        ~gdf.geometry.is_empty]# "~"" selectionne les geom pas vides
+    gdf_clean.to_file(output_gpkg, layer=layer, driver="GPKG")
+    
+print("Export terminé")
 
+#Verification : 
 
+for layer in layers :
+    gdf = gpd.read_file("C:\PANALESIS\Vers0_christian\Plates_psAbs_output_geom_clean.gpkg", layer = layer)
+    print(gdf.geometry.is_empty.sum())
+    
+for layer in layers :
+    gdf = gpd.read_file("C:\PANALESIS\Vers0_christian\Plates_psAbs_output_geom_clean.gpkg", layer = layer)
+    print(gdf.geometry.isna)
