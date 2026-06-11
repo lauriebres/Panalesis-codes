@@ -3,8 +3,8 @@ import geopandas as gpd
 import pandas as pd
 import fiona 
 
-path = r"C:\PANALESIS\R_psAbs_output_geom_clean.gpkg"
-layers = fiona.listlayers(r"C:\PANALESIS\R_psAbs_output_geom_clean.gpkg")
+path = r"C:\PANALESIS\outputs\R_psAbs_output_geom_clean.gpkg"
+layers = fiona.listlayers(path)
 
 for layer in layers :
     gdf = gpd.read_file(path, layer =layer)
@@ -33,26 +33,27 @@ def clip_lon_lat(x, y):
         y = np.clip(y, -90, 90)
     return (x, y)
 
+
 #appliquer à toutes les couches et export : 
 
-
-output_directory = r"C:\PANALESIS\Vers0_christian\R_psAbs_output_bounds_clean.gpkg"
-
-
+output_directory = r"C:\PANALESIS\outputs\R_psAbs_output_bounds_clean.gpkg"
 
 for layer in layers:
-    
     gdf = gpd.read_file(path, layer=layer)
-
+    original_geom = gdf.geometry.copy() #copie des géométries originales pour comparaison
     gdf["geometry"] = gdf["geometry"].apply(lambda geom: transform(clip_lon_lat, geom))
+    modified = gdf.geometry.ne(original_geom)
+    nbre_modified = modified.sum()
+    print("layer:", layer, "nombre de géométrie modifées :", nbre_modified)
     gdf.to_file(output_directory, layer=layer, driver="GPKG")
     
 print("export done")
 
+
 #Verification des géométries sur le nouveau gpkg corrigé : :
 
-path = r"C:\PANALESIS\Vers0_christian\R_psAbs_output_bounds_clean.gpkg"
-layers = fiona.listlayers(r"C:\PANALESIS\Vers0_christian\R_psAbs_output_bounds_clean.gpkg")
+path = r"C:\PANALESIS\outputs\R_psAbs_output_bounds_clean.gpkg"
+layers = fiona.listlayers(path)
 
 for layer in layers :
     gdf = gpd.read_file(path, layer =layer)
@@ -67,5 +68,4 @@ for layer in layers :
     if len(hors_limites) > 0:
         print("layer name: ", layer)
         print(hors_limites)
-    else: print("Pas de géométrie hors limites")
-    
+    else: print(layer, "Pas de géométrie hors limites") 
