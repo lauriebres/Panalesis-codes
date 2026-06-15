@@ -6,9 +6,6 @@ import os
 
 path = r"C:\PANALESIS\outputs\Plates_psAbs_output_bounds_clean.gpkg"
 layers = fiona.listlayers(path)
-
-for layer in layers:
-    print(layer)
     
 # Pour afficher tous les différents noms des plaques dans le champ "PlateName" :
 
@@ -20,7 +17,7 @@ for layer in fiona.listlayers(path):
     if field in gdf.columns:
         values.update(gdf[field].dropna().unique())
 
-print(len(values), "nombre de noms différents :") #pour obtenir le nombre de noms différents trouvées dans tous les âges
+print(len(values), "nombre de noms différents :") #pour obtenir le nombre de noms différents trouvés dans tous les âges
 
 for v in sorted(values):
     print(v)
@@ -43,7 +40,7 @@ for layer in fiona.listlayers(path):
     if field in gdf.columns:
         values.update(gdf[field].dropna().unique())
 
-print(len(values), "nombre de noms différents :") #pour obtenir le nombre de noms différents trouvées dans tous les âges
+print(len(values), "nombre de noms différents :") #pour obtenir le nombre de noms différents trouvés dans tous les âges
 
 for v in sorted(values):
     print(v)
@@ -56,9 +53,6 @@ input_gpkg = r"C:\PANALESIS\outputs\Plates_psAbs_output_bounds_clean.gpkg"
 output_gpkg = r"C:\PANALESIS\outputs\Plates_psAbs_names_maj.gpkg"
 
 field = "PlateName"
-
-if os.path.exists(output_gpkg):
-    os.remove(output_gpkg)
 
 for layer in fiona.listlayers(input_gpkg):
     gdf = gpd.read_file(input_gpkg, layer=layer)
@@ -80,9 +74,6 @@ input_gpkg = r"C:\PANALESIS\outputs\R_psAbs_output_bounds_clean.gpkg"
 output_gpkg = r"C:\PANALESIS\outputs\R_psAbs_names_maj.gpkg"
 
 field = "PLATE"
-
-if os.path.exists(output_gpkg):
-    os.remove(output_gpkg)
 
 for layer in fiona.listlayers(input_gpkg):
     gdf = gpd.read_file(input_gpkg, layer=layer)
@@ -132,8 +123,7 @@ print(len(values), "nombre de noms différents :") #pour obtenir le nombre de no
 
 for v in sorted(values):
     print(v)
-    
-    
+      
 #Comparer les noms des deux gpkg :
 
 gpkg_a = r"C:\PANALESIS\outputs\Plates_psAbs_names_maj.gpkg" 
